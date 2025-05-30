@@ -26,7 +26,7 @@ todas_las_piezas = [pieza_O, pieza_I, pieza_L, pieza_J, pieza_T, pieza_Z, pieza_
 #ventana principal 
 ventana =Tk()
 ventana.title("Tetris")
-canvas = Canvas(ventana, width=700, height=800, bg='lightgray')
+canvas = Canvas(ventana, width=700, height=800, bg="lightgray")
 canvas.pack()
 
 TAM_CELDA = 30
@@ -79,12 +79,26 @@ def dibujar_tablero(canvas, ruta):
             y2 = y1 + TAM_CELDA
             
             celda = tablero[i][j]
-            if celda == '+':
-                color = "gray30"
-            elif celda == '0':
+            if celda == "+":
+                color = "gray"
+            elif celda == "0":
                 color = "white"
-            else:
+            elif celda == "1":
                 color = "blue"
+            elif celda == "2":
+                color = "Red"
+            elif celda == "3":
+                color = "Black"
+            elif celda == "4":
+                color = "Green"
+            elif celda == "5":
+                color = "Orange"
+            elif celda == "6":
+                color = "Purple"
+            elif celda == "7":
+                color = "Brown"
+            else:
+                color = "Yellow"
             
             canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
     
