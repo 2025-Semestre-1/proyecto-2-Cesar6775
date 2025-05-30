@@ -1,6 +1,28 @@
 from tkinter import *
 import random
 
+#
+#creacion de piezas
+pieza_O = [[1, 1],[1, 1]]
+
+pieza_I = [[2],[2],[2],[2]]
+
+pieza_L = [[3, 0],[3, 0],[3, 3]]
+
+pieza_J = [[0, 4],[0, 4],[4, 4]]
+
+pieza_T = [[5, 5, 5],[0, 5, 0]]
+
+pieza_Z = [[6, 6, 0],[0, 6, 6]]
+
+pieza_U = [[7, 0, 7],[7, 7, 7]]
+
+pieza_mas = [[0, 8, 0],[8, 8, 8],[0, 8, 0]]
+
+
+todas_las_piezas = [pieza_O, pieza_I, pieza_L, pieza_J, pieza_T, pieza_Z, pieza_U, pieza_mas]
+
+#
 #ventana principal 
 ventana =Tk()
 ventana.title("Tetris")
