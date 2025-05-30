@@ -4,7 +4,14 @@ import random
 #ventana principal 
 ventana =Tk()
 ventana.title("Tetris")
+canvas = Canvas(ventana, width=700, height=800, bg='lightgray')
+canvas.pack()
 
+TAM_CELDA = 30
+EXTRA = 30 
+ruta = ""
+
+    
 #funciones principales
 
 def cargar_tablero(ruta):
@@ -16,8 +23,11 @@ def cargar_tablero(ruta):
         fila = list(linea)
         tablero += [fila]
     return tablero
+
 def nuevo_juego():
-    print ()
+    global ruta 
+    ruta = "base.txt"
+    dibujar_tablero(canvas, ruta) 
 
 def cargar_juego():
     print()
@@ -29,3 +39,32 @@ def estadisticas ():
     print ("a Nombre del jugador")
     print ("b Puntaje Obtenido")
     print ("c Mostrar el Ranking o posición con respecto a otros jugadores (Top 10)")
+
+
+def dibujar_tablero(canvas, ruta):
+    global TAM_CELDA
+    
+    filas = 22
+    columnas = 12
+    tablero = cargar_tablero(ruta)
+    canvas.delete("all")
+    
+    for i in range(filas):
+        for j in range(columnas):
+            x1 = j * TAM_CELDA
+            y1 = i * TAM_CELDA
+            x2 = x1 + TAM_CELDA
+            y2 = y1 + TAM_CELDA
+            
+            celda = tablero[i][j]
+            if celda == '+':
+                color = "gray30"
+            elif celda == '0':
+                color = "white"
+            else:
+                color = "blue"
+            
+            canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
+    
+nuevo_juego()
+ventana.mainloop()
