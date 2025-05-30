@@ -49,7 +49,8 @@ def cargar_tablero(ruta):
 def nuevo_juego():
     global ruta 
     ruta = "base.txt"
-    dibujar_tablero(canvas, ruta) 
+    dibujar_tablero(canvas, ruta)
+    pieza_actual = random.choice(todas_las_piezas)
 
 def cargar_juego():
     print()
