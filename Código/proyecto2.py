@@ -29,9 +29,13 @@ ventana.title("Tetris")
 canvas = Canvas(ventana, width=700, height=800, bg="lightgray")
 canvas.pack()
 
+#gobales 
 TAM_CELDA = 30
-EXTRA = 30 
+EXTRA = 10 
 ruta = ""
+pieza_actual = None
+posicion_pieza = [4,0]
+tablero = []
 
     
 #funciones principales
@@ -48,9 +52,10 @@ def cargar_tablero(ruta):
 
 def nuevo_juego():
     global ruta 
+    global tablero
     ruta = "base.txt"
-    dibujar_tablero(canvas, ruta)
-    pieza_actual = random.choice(todas_las_piezas)
+    tablero = cargar_tablero(ruta)
+    dibujar_tablero(canvas, tablero)
 
 def cargar_juego():
     print()
@@ -64,20 +69,21 @@ def estadisticas ():
     print ("c Mostrar el Ranking o posición con respecto a otros jugadores (Top 10)")
 
 
-def dibujar_tablero(canvas, ruta):
+def dibujar_tablero(canvas, tablero):
     global TAM_CELDA
+    global EXTRA
     
     filas = 22
     columnas = 12
-    tablero = cargar_tablero(ruta)
+    #tablero = cargar_tablero(ruta)
     canvas.delete("all")
     
     for i in range(filas):
         for j in range(columnas):
-            x1 = j * TAM_CELDA
-            y1 = i * TAM_CELDA
-            x2 = x1 + TAM_CELDA
-            y2 = y1 + TAM_CELDA
+            x1 = j * TAM_CELDA + EXTRA
+            y1 = i * TAM_CELDA + EXTRA
+            x2 = x1 + TAM_CELDA 
+            y2 = y1 + TAM_CELDA 
             
             celda = tablero[i][j]
             if celda == "+":
@@ -102,6 +108,9 @@ def dibujar_tablero(canvas, ruta):
                 color = "Yellow"
             
             canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
+            
+boton_iniciar = Button(ventana, text="Iniciar Juego")
+boton_iniciar.place(x=500, y=50)
     
 nuevo_juego()
 ventana.mainloop()
