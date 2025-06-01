@@ -1,7 +1,6 @@
 #importacion de librerias
 from tkinter import *
 import random
-import time
 from tkinter import messagebox
 from tkinter import simpledialog
 
@@ -46,6 +45,7 @@ contador_juegos = 0
 
     
 #funciones principales
+#funcion donde se carga el contenido de tablero desde la ruta de un archivo
 def cargar_tablero(ruta):
     with open(ruta,"r") as archivo:
         lineas = archivo.readlines()
@@ -56,19 +56,23 @@ def cargar_tablero(ruta):
         tablero += [fila]
     return tablero
 
+#aqui se lee el contenido del tablero 
 def nuevo_juego():
     global ruta 
     global tablero
     ruta = f"{ruta1}.txt"
     tablero = cargar_tablero(ruta)
     dibujar_tablero(canvas, tablero)
-
-
+    
+#funcion para gurdar el juego actual, aqui se guarda el tablero, la pieza_actual, la posicion de la pieza, nombre jugador, puntaje que lleva actualmente, y un mensaje para identificar
+#donde queda la posicion_pieza y ya el contenido del tablero 
 def guardar_juego():
     global contador_juegos
     global tablero
     global posicion_pieza
     global pieza_actual
+    global puntaje
+    global nombre_jugador
     contador_juegos += 1
     copia = []
     for fila in tablero:
@@ -87,7 +91,7 @@ def guardar_juego():
         archivo.write(f"{posicion_pieza[0]},{posicion_pieza[1]}\n")
         for fila in copia:
             archivo.write(''.join(fila) + '\n')
-            
+#aqui es donde ya se carga la partida(si es que hay una guardada) se lee todo lo necesario se cargan los datos y se muestran en el canvas, listo para funcionar (creo)            
 def cargar_juego():
     global tablero
     global puntaje
@@ -121,9 +125,7 @@ def cargar_juego():
                 fila.append(int(x))
             pieza_actual.append(fila)
             i += 1
-
         i += 1
-
         posicion_pieza = []
         for x in lineas[i].split(","):
             posicion_pieza.append(int(x))
@@ -138,9 +140,10 @@ def cargar_juego():
         dibujar_tablero(canvas, tablero)
         dibujar_pieza()
         mover_pieza_hacia_abajo()
+        
     except FileNotFoundError:
         messagebox.showerror("Error", "Archivo no encontrado.")
-
+#aqui es la estadistica dependiendo de la eleccion del usuario 1, 2 o 3 se le muestran diferentes cosas
 def estadisticas ():
     global nombre_jugador
     global puntaje
@@ -189,7 +192,7 @@ def estadisticas ():
     except ValueError:
         messagebox.showerror("Error", "Debe ingresar un valor de opcion del tipo entero(del 1 al 3)")
 
-
+#aqui es donde se dibuja el tablero(canvas) para ya representarlo graficamente 
 def dibujar_tablero(canvas, tablero):
     global TAM_CELDA
     global EXTRA
@@ -232,7 +235,7 @@ def dibujar_tablero(canvas, tablero):
  
  
 #funcion de creacion de pieza
- 
+#esta funcion crea una pieza nueva, y guarda su valor
 def generar_pieza():
     global pieza_actual
     global posicion_pieza
@@ -250,7 +253,7 @@ def generar_pieza():
                     mensaje_game_over()
                     return False
     return True
-
+#con esta funcion representamos la pieza de manera grafica en el codigo 
 def dibujar_pieza():
     global pieza_actual, posicion_pieza
     if pieza_actual is not None:
@@ -283,8 +286,7 @@ def dibujar_pieza():
                     
                     canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
                 
-##############################################################################################################################
-
+#con esta funcion determinamos que los limites del tablero y se obtiene un valor booleano si la pieza choca con algo y tampoco deja que la pieza traspase otras piezas
 def hay_colision(direccion):
     global posicion_pieza, pieza_actual, tablero
     
@@ -309,9 +311,11 @@ def hay_colision(direccion):
                     if x + 1 >= len(tablero[0]) - 1 or tablero[y][x + 1] != "0":
                         return True
     return False
-
+#en esta funcion cuando una pieza no puede seguir cayendo la fijamos en el tablero, para de esta manera poder borrar lineas mas adelante en el codigo
 def fijar_pieza_en_tablero():
-    global posicion_pieza, pieza_actual, tablero
+    global posicion_pieza
+    global pieza_actual
+    global tablero
     
     for i in range(len(pieza_actual)):
         fila = pieza_actual[i]
@@ -322,10 +326,7 @@ def fijar_pieza_en_tablero():
                 y = posicion_pieza[1] + i
                 tablero[y][x] = str(celda) 
 
-###############################################################################################################################
-
-
-
+#en esta funcion detecta si la fila es eliminable o no, y dependiendo del resultado se elimina la linea, y se bajan las piezas de arriba, pero los obstaculos se mantienen en el mismo lugar
 def eliminar_lineas_completas():
     global tablero
     global puntaje
@@ -364,13 +365,11 @@ def eliminar_lineas_completas():
             i -= 1
     puntaje += lineas_eliminadas * 100
     return lineas_eliminadas
-
+#esta funcion fue la implementada para rotar la pieza, se utiliza con la tecla "up"
 def rotar_pieza(pieza):
     filas = len(pieza)
     columnas = len(pieza[0])
-
     nueva_pieza = []
-
     col = 0
     while col < columnas:
         nueva_fila = []
@@ -381,9 +380,8 @@ def rotar_pieza(pieza):
             fila -= 1
         nueva_pieza.append(nueva_fila)
         col += 1
-
     return nueva_pieza
-
+#en esta funcion se verifica si la tecla puede rotar o no, esta para que no hayan errores inesperados cuando se rote una pieza, funciona de manera que las columnas las vuelve filas 
 def puede_rotar():
     global pieza_actual, posicion_pieza, tablero
 
@@ -399,7 +397,7 @@ def puede_rotar():
                     return False
     return True 
 
-
+#con esta funcion la pieza cae automaticamente, y tambien aumenta la velocidad de la caida, pero no se nota tanto
 def mover_pieza_hacia_abajo():
     global posicion_pieza
     global puntaje
@@ -430,14 +428,14 @@ def mover_pieza_hacia_abajo():
                 ventana.after(200, mover_pieza_hacia_abajo)
             
         
-#mover la pieza
+#mover la pieza hacia la izquierda
 def mover_izquierda(event=None):
     global posicion_pieza
     colision = hay_colision("izquierda")
     if colision == False:
         posicion_pieza[0] -= 1
         redibujar()
-        
+#mover la pieza hacia la derecha        
 def mover_derecha(event=None):
     global posicion_pieza
     global pieza_actual
@@ -445,7 +443,7 @@ def mover_derecha(event=None):
     if colision == False:
         posicion_pieza[0] += 1
         redibujar()
-        
+#mover la pieza hacia abajo de manera manual         
 def mover_abajo(event=None):
     global posicion_pieza
     global juego_terminado
@@ -472,7 +470,7 @@ def rotar(event=None):
 def redibujar():
     dibujar_tablero(canvas, tablero)
     dibujar_pieza()
-
+#una de las funciones pricipales donde se inicia el nuevo juego, tambien se reinician las funciones globales
 def iniciar_juego():
     global puntaje
     global juego_terminado
@@ -494,7 +492,7 @@ def iniciar_juego():
         boton_iniciar.config(state=DISABLED)
     else:
         messagebox.showwarning("Aviso", "No se inicio el juego porque no se ingreso un nombre")
-        
+#mensaje donde se muestra "game over" solo que con este tengo un problema aveces muestra el mensaje y aveces no, creo que ya esta bueno, pero aveces no se muestra       
 def mensaje_game_over():
     global juego_terminado
     global nombre_jugador
@@ -506,18 +504,17 @@ def mensaje_game_over():
     with open("estadisticas.txt", "a") as estadisticas:
         estadisticas.write(f"{nombre_jugador},{puntaje}\n")
     boton_iniciar.config(state=NORMAL)
-##################################################################################
- 
+#botones principales 
 #boton de iniciar 
 boton_iniciar = Button(ventana, text="Iniciar Juego", command=iniciar_juego)
 boton_iniciar.place(x=500, y=50)
-
+#boton guardar
 boton_Guardar = Button(ventana, text="Guardar Juego", command=guardar_juego)
 boton_Guardar.place(x=500, y=100)
-
+#boton cargar
 boton_Cargar = Button(ventana, text="Cargar Juego", command=cargar_juego)
 boton_Cargar.place(x=500, y=150)
-
+#boton estadistica 
 boton_estadistica = Button(ventana, text="estadistica", command=estadisticas)
 boton_estadistica.place(x=500, y=200)
 
