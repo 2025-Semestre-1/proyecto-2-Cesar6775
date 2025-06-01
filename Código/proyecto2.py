@@ -68,9 +68,24 @@ def guardar_juego():
     print()
 
 def estadisticas ():
-    print ("a Nombre del jugador")
-    print ("b Puntaje Obtenido")
-    print ("c Mostrar el Ranking o posición con respecto a otros jugadores (Top 10)")
+    global nombre_jugador
+    global puntaje
+    try:
+        opcion = simpledialog.askstring("Opción", "Elige tu opción (1 al 3):\n 1. Ver nombre del jugador\n 2. Ver puntaje del jugador\n 3. Mostrar ranking (top 10)")
+        if opcion == None:
+            return
+        opcion = int(opcion)
+        
+        if opcion == 1:
+            messagebox.showinfo("Nombre del jugador", f"Nombre: {nombre_jugador}")
+        elif opcion == 2:
+            messagebox.showinfo("Puntaje del jugador", f"Puntaje obtenido: {puntaje}")
+        elif opcion == 3:
+            print("Hola")
+        else:
+            messagebox.showerror("Error", "Opción inválida, solo se admite\n 1 = Ver nombre del jugador\n 2 = Ver puntaje\n 3 = Mostrar ranking (top 10)")
+    except ValueError:
+        messagebox.showerror("Error", "Debe ingresar un valor de opcion del tipo entero(del 1 al 3)")
 
 
 def dibujar_tablero(canvas, tablero):
