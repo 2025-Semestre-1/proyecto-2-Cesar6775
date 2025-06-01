@@ -155,7 +155,35 @@ def estadisticas ():
         elif opcion == 2:
             messagebox.showinfo("Puntaje del jugador", f"Puntaje obtenido: {puntaje}")
         elif opcion == 3:
-            print("Hola")
+            try:
+                with open("estadisticas.txt", "r") as archivo:
+                    jugadores = []
+                    for linea in archivo:
+                        datos = linea.strip().split(",")
+                        nombre = datos[0]
+                        try:
+                            puntos = int(datos[1])
+                            jugadores.append((nombre, puntos))
+                        except ValueError:
+                            continue  
+                    
+                    n = len(jugadores)
+                    for vuelta in range(n - 1):
+                        for indice in range(n - 1 - vuelta):
+                            puntaje_actual = jugadores[indice][1]
+                            puntaje_siguiente = jugadores[indice + 1][1]
+                            if puntaje_actual < puntaje_siguiente:
+                                jugadores[indice], jugadores[indice + 1] = jugadores[indice + 1], jugadores[indice]
+
+                    top_10 = jugadores[:10]
+
+                    mensaje = " Top 10 Jugadores \n\n"
+                    for i, (nombre, puntos) in enumerate(top_10, 1):
+                        mensaje += f"{i}. {nombre} - {puntos} puntos\n"
+                    messagebox.showinfo("Top 10", mensaje)
+
+            except FileNotFoundError:
+                messagebox.showerror("Error", "No hay estadísticas registradas.")
         else:
             messagebox.showerror("Error", "Opción inválida, solo se admite\n 1 = Ver nombre del jugador\n 2 = Ver puntaje\n 3 = Mostrar ranking (top 10)")
     except ValueError:
