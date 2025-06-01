@@ -3,5 +3,5 @@
 ### 2025081699 Cesar Andres Espinoza Herrera 
 
 ### Estado del proyecto: Excelente
-### Enlace del video:
+### Enlace del video: https://youtu.be/NFyAfkL3UFc
 Recordar que el video debe ser público para ser visto por el profesor
