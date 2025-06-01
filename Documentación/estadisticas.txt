@@ -1,0 +1,17 @@
+Julio,0
+Steven,0
+cristian,0
+cr,0
+jh,0
+Cesar,100
+Andres,100
+Julio,0
+Julio,100
+Julio,300
+Julio,400
+Julio,500
+hola,0
+hola,0
+hola,0
+hola,0
+Cesar,0
