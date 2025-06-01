@@ -35,12 +35,14 @@ canvas.pack()
 TAM_CELDA = 30
 EXTRA = 10 
 ruta = ""
+ruta1 = "base"
 pieza_actual = None
 posicion_pieza = [4,0]
 tablero = []
 puntaje = 0
 juego_terminado = False
 nombre_jugador = ""
+contador_juegos = 0
 
     
 #funciones principales
@@ -57,15 +59,87 @@ def cargar_tablero(ruta):
 def nuevo_juego():
     global ruta 
     global tablero
-    ruta = "base.txt"
+    ruta = f"{ruta1}.txt"
     tablero = cargar_tablero(ruta)
     dibujar_tablero(canvas, tablero)
 
-def cargar_juego():
-    print()
 
 def guardar_juego():
-    print()
+    global contador_juegos
+    global tablero
+    global posicion_pieza
+    global pieza_actual
+    contador_juegos += 1
+    copia = []
+    for fila in tablero:
+        copia.append(fila[:])
+        
+    ruta = f"{ruta1}{contador_juegos}.txt"
+    with open (ruta,"w") as archivo:
+        archivo.write(f"{puntaje}\n")
+        archivo.write(f"{nombre_jugador}\n")
+        
+        for fila in pieza_actual:
+            for elemento in fila:
+                pieza = ",".join(str(elemento) )
+                archivo.write(pieza + "\n")
+        archivo.write("FIN_PIEZA\n")
+        archivo.write(f"{posicion_pieza[0]},{posicion_pieza[1]}\n")
+        for fila in copia:
+            archivo.write(''.join(fila) + '\n')
+            
+def cargar_juego():
+    global tablero
+    global puntaje
+    global nombre_jugador
+    global posicion_pieza
+    global pieza_actual
+    try:
+        opcion = simpledialog.askstring("Opción", "Elige el número del archivo que quieres cargar:")
+        if opcion is None:
+            return
+        opcion = int(opcion)
+    except ValueError:
+        messagebox.showerror("Error", "Debe ingresar un valor entero.")
+        return
+
+    ruta_archivo = f"{ruta1}{opcion}.txt"
+    try:
+        with open(ruta_archivo, "r") as archivo:
+            lineas1 = archivo.readlines()
+            for linea in lineas1:
+                lineas += [linea.strip()]
+
+        puntaje = int(lineas[0])
+        nombre_jugador = lineas[1]
+
+        pieza_actual = []
+        i = 2
+        while lineas[i] != "FIN_PIEZA":
+            fila = []
+            for x in lineas[i].split(","):
+                fila.append(int(x))
+            pieza_actual.append(fila)
+            i += 1
+
+        i += 1
+
+        posicion_pieza = []
+        for x in lineas[i].split(","):
+            posicion_pieza.append(int(x))
+        i += 1
+        
+        tablero = []
+        while i < len(lineas):
+            fila = list(lineas[i])
+            tablero.append(fila)
+            i += 1
+        canvas.delete("all")
+        dibujar_tablero(canvas, tablero)
+        dibujar_pieza()
+        mover_pieza_hacia_abajo()
+    except FileNotFoundError:
+        messagebox.showerror("Error", "Archivo no encontrado.")
 
 def estadisticas ():
     global nombre_jugador
@@ -126,7 +200,7 @@ def dibujar_tablero(canvas, tablero):
                 color = "Yellow"
             
             canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
-    canvas.create_text(500, 100, text=f"Puntaje: {puntaje}", font=("Arial", 15), fill="red")
+    canvas.create_text(532, 250, text=f"Puntaje: {puntaje}", font=("Arial", 12), fill="red")
  
  
 #funcion de creacion de pieza
@@ -318,11 +392,11 @@ def mover_pieza_hacia_abajo():
             canvas.delete("all")
             dibujar_tablero(canvas, tablero)
             dibujar_pieza()
-            if puntaje > 300:
+            if puntaje < 300:
                 ventana.after(500, mover_pieza_hacia_abajo)
-            elif puntaje > 500:
+            elif puntaje < 500:
                 ventana.after(400, mover_pieza_hacia_abajo)
-            elif puntaje > 700:
+            elif puntaje < 700:
                 ventana.after(300, mover_pieza_hacia_abajo)
             else:
                 ventana.after(200, mover_pieza_hacia_abajo)
@@ -337,7 +411,8 @@ def mover_izquierda(event=None):
         redibujar()
         
 def mover_derecha(event=None):
-    global posicion_pieza, pieza_actual
+    global posicion_pieza
+    global pieza_actual
     colision = hay_colision("derecha")
     if colision == False:
         posicion_pieza[0] += 1
@@ -383,11 +458,12 @@ def iniciar_juego():
     nombre_jugador = ""
     nuevo_juego() 
     nombre_jugador = simpledialog.askstring("Nuevo juego", "Ingresa tu nombre:")
-    if nombre_jugador != None:
+    if nombre_jugador and nombre_jugador.strip():
         verdadero = generar_pieza()
         if verdadero == True:
             dibujar_pieza()
             mover_pieza_hacia_abajo()
+        boton_iniciar.config(state=DISABLED)
     else:
         messagebox.showwarning("Aviso", "No se inicio el juego porque no se ingreso un nombre")
         
@@ -401,11 +477,21 @@ def mensaje_game_over():
     canvas.create_text(360, 350, text="GAME OVER", fill="red", font=("Arial", 30, "bold"))
     with open("estadisticas.txt", "a") as estadisticas:
         estadisticas.write(f"{nombre_jugador},{puntaje}\n")
+    boton_iniciar.config(state=NORMAL)
 ##################################################################################
  
 #boton de iniciar 
 boton_iniciar = Button(ventana, text="Iniciar Juego", command=iniciar_juego)
 boton_iniciar.place(x=500, y=50)
+
+boton_Guardar = Button(ventana, text="Guardar Juego", command=guardar_juego)
+boton_Guardar.place(x=500, y=100)
+
+boton_Cargar = Button(ventana, text="Cargar Juego", command=cargar_juego)
+boton_Cargar.place(x=500, y=150)
+
+boton_estadistica = Button(ventana, text="estadistica", command=estadisticas)
+boton_estadistica.place(x=500, y=200)
 
 #teclas de movimiento
 ventana.bind("<Left>", mover_izquierda)
