@@ -4,6 +4,8 @@ import random
 import time
 from tkinter import messagebox
 
+print("Hola")
+
 #creacion de piezas
 pieza_O = [[1, 1],[1, 1]]
 
