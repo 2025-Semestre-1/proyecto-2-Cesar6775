@@ -129,8 +129,8 @@ def generar_pieza():
                 x = posicion_pieza[0] + j
                 y = posicion_pieza[1] + i
                 if tablero[y][x] != "0":
-                    mensaje_game_over()
                     juego_terminado = True
+                    mensaje_game_over()
                     return False
     return True
 
@@ -245,7 +245,6 @@ def eliminar_lineas_completas():
             lineas_eliminadas += 1
         else:
             i -= 1
-    print (lineas_eliminadas)
     puntaje += lineas_eliminadas * 100
     return lineas_eliminadas
 
@@ -299,7 +298,6 @@ def mover_pieza_hacia_abajo():
     else:
         fijar_pieza_en_tablero()
         eliminar_lineas_completas()
-        generar_pieza()
         mover = generar_pieza()
         if mover== True:
             canvas.delete("all")
@@ -380,10 +378,14 @@ def iniciar_juego():
         
 def mensaje_game_over():
     global juego_terminado
+    global nombre_jugador
+    global puntaje
     juego_terminado = True
     canvas.delete("all")
     dibujar_tablero(canvas, tablero)
     canvas.create_text(360, 350, text="GAME OVER", fill="red", font=("Arial", 30, "bold"))
+    with open("estadisticas.txt", "a") as estadisticas:
+        estadisticas.write(f"{nombre_jugador},{puntaje}\n")
 ##################################################################################
  
 #boton de iniciar 
