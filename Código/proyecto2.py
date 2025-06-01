@@ -3,8 +3,7 @@ from tkinter import *
 import random
 import time
 from tkinter import messagebox
-
-print("Hola")
+from tkinter import simpledialog
 
 #creacion de piezas
 pieza_O = [[1, 1],[1, 1]]
@@ -41,6 +40,7 @@ posicion_pieza = [4,0]
 tablero = []
 puntaje = 0
 juego_terminado = False
+nombre_jugador = ""
 
     
 #funciones principales
@@ -286,6 +286,7 @@ def puede_rotar():
 
 def mover_pieza_hacia_abajo():
     global posicion_pieza
+    global puntaje
     if juego_terminado == True:
         return
     colision = hay_colision("abajo")
@@ -304,7 +305,15 @@ def mover_pieza_hacia_abajo():
             canvas.delete("all")
             dibujar_tablero(canvas, tablero)
             dibujar_pieza()
-            ventana.after(500, mover_pieza_hacia_abajo)
+            if puntaje > 300:
+                ventana.after(500, mover_pieza_hacia_abajo)
+            elif puntaje > 500:
+                ventana.after(400, mover_pieza_hacia_abajo)
+            elif puntaje > 700:
+                ventana.after(300, mover_pieza_hacia_abajo)
+            else:
+                ventana.after(200, mover_pieza_hacia_abajo)
+            
         
 #mover la pieza
 def mover_izquierda(event=None):
@@ -353,17 +362,22 @@ def iniciar_juego():
     global juego_terminado
     global pieza_actual
     global posicion_pieza
+    global nombre_jugador
     puntaje = 0
     juego_terminado = False
     pieza_actual = None
     posicion_pieza = [4, 0]
-    nuevo_juego()  
-    if generar_pieza():
-        dibujar_pieza()
-        mover_pieza_hacia_abajo()
-
- 
- 
+    nombre_jugador = ""
+    nuevo_juego() 
+    nombre_jugador = simpledialog.askstring("Nuevo juego", "Ingresa tu nombre:")
+    if nombre_jugador != None:
+        verdadero = generar_pieza()
+        if verdadero == True:
+            dibujar_pieza()
+            mover_pieza_hacia_abajo()
+    else:
+        messagebox.showwarning("Aviso", "No se inicio el juego porque no se ingreso un nombre")
+        
 def mensaje_game_over():
     global juego_terminado
     juego_terminado = True
